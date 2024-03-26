@@ -153,7 +153,7 @@ ECS Service Connect allows for automatic request retries if a service instance f
 
 You can enable and observe this as follows:
 
-*   Increase the [number](https://aws.github.io/copilot-cli/docs/manifest/backend-service/#count) of _TMS Validator_ service instances to **2** in `copilot/content/manifest.yml`. 
+*   Increase the [number](https://aws.github.io/copilot-cli/docs/manifest/backend-service/#count) of _TMS Validator_ service instances to **2** in `copilot/validator/manifest.yml`. 
 
 *   In the `services/validator` folder, use the `fault` Express middleware defined in `src/middleware.js` in the Express application created in `src/index.js`.
 
@@ -164,7 +164,7 @@ You can enable and observe this as follows:
             routes.post('/injectfault', async (_, res) => {
                 const response = await axios({
                     method: 'POST',
-                    url: 'http://content/503'
+                    url: 'http://validator/503'
                 });
 
                 res.send(response.data);
@@ -187,6 +187,17 @@ Once redeployment is finished:
     > `<AWS_LB_URL>` is again the Load Balanced Web Service URL for the _TMS API_. 
 
 *   Send a number of requests:
+
+        // bash
+        sudo apt update
+        sudo apt install siege
+
+        # confirm installation
+        siege --version
+
+        # execute
+        siege -r 5 -c 2 "http://<AWS_LB_URL>/content POST"
+        
 
         // macOS.
         ab -n 10 -m POST http://<AWS_LB_URL>/content
